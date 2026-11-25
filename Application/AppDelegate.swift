@@ -79,6 +79,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         if let coordinator = AppCoordinator.shared {
             // Save playback state before terminating
             coordinator.savePlaybackState()
+            coordinator.clearNotchBridge()
 
             // Stop the playback
             coordinator.playbackManager.stopGracefully()

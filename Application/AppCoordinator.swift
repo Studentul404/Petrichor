@@ -10,6 +10,7 @@ class AppCoordinator: ObservableObject {
     let playbackManager: PlaybackManager
     let menuBarManager: MenuBarManager
     let scrobbleManager: ScrobbleManager
+    private let notchBridge: NotchBridge
 
     private let sessionStore: PlaybackSessionStore
     private var restorationGeneration: UInt64 = 0
@@ -28,6 +29,10 @@ class AppCoordinator: ObservableObject {
         playbackManager.connectRemoteCommandCenter()
         menuBarManager = MenuBarManager(playbackManager: playbackManager, playlistManager: playlistManager)
         scrobbleManager = ScrobbleManager()
+        let playback = playbackManager, playlist = playlistManager, library = libraryManager
+        notchBridge = MainActor.assumeIsolated {
+            NotchBridge(playbackManager: playback, playlistManager: playlist, libraryManager: library)
+        }
 
         Self.shared = self
 
@@ -48,6 +53,11 @@ class AppCoordinator: ObservableObject {
     }
 
     // MARK: - Persistence
+
+    @MainActor
+    func clearNotchBridge() {
+        notchBridge.clear()
+    }
 
     func savePlaybackState() {
         savePlaybackState(synchronous: true)
