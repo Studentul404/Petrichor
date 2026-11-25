@@ -143,6 +143,7 @@ final class NotchBridge {
         ioQueue.async { [weak self] in
             do {
                 try data.write(to: fileURL, options: .atomic)
+                Logger.info("Notch bridge wrote snapshot (\(data.count) bytes)")
                 DispatchQueue.main.async {
                     self?.postStateChanged(path: path)
                 }
@@ -197,6 +198,7 @@ final class NotchBridge {
 
     private func playQueueIndex(_ index: Int?) {
         guard let index else { return }
+        Logger.info("Notch bridge play request for queue index \(index)")
         playlistManager.playFromQueue(at: index)
     }
 
